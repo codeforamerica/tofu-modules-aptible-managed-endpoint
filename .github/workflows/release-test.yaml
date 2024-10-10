@@ -55,8 +55,11 @@ jobs:
       - name: Determine the new version number
         id: version
         shell: bash
+        # Look for the last version number, expecting it to be in the format:
+        # `#.#.#-<suffix>.#` where the suffix is optional.
         run: |
-          [[ $MSG =~ ^bump:.+([0-9]+\.[0-9+]\.[0-9]+[a-z0-9.\-]*)[[:space:]]\\(#[0-9]+\\) ]]
+          MESSAGE='${{ github.event.head_commit.message }}'
+          [[ $MESSAGE =~ ^bump:.+([0-9]+\.[0-9+]\.[0-9]+[a-z0-9.\-]*)[[:space:]]\\(#[0-9]+\\) ]]
           echo "version=${BASH_REMATCH[2]}" >> $GITHUB_OUTPUT
       - name: Output the new version number
         run: echo '${{ steps.version.outputs.version }}'
