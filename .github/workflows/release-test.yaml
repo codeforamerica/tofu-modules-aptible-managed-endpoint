@@ -97,7 +97,7 @@ jobs:
             --exclude='*.tar.gz' \
             --exclude='release.md' \
             --exclude='CODEOWNERS' \
-            czf "${{ steps.module_name.outputs.name }}-${{ steps.bump.outputs.version }}.tar.gz" \
+            -czf "${{ steps.module_name.outputs.name }}-${{ steps.bump.outputs.version }}.tar.gz" \
             .
       - name: Create release
         uses: softprops/action-gh-release@v2
