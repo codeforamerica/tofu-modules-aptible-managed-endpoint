@@ -50,6 +50,15 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+      - name: Get the module name
+        id: module_name
+        run: |
+          REPO_NAME="${{ github.event.repository.name }}"
+          REPO_NAME="${REPO_NAME/tofu-modules-/}"
+          MODULE_NAME="${REPO_NAME//-/_}"
+          echo "name=${MODULE_NAME}" >> $GITHUB_OUTPUT
+      - name: Output the module name
+        run: echo '${{ steps.module_name.outputs.name }}'
       - name: Print commit message
         run: echo '${{ github.event.head_commit.message }}'
       - name: Determine the new version number
@@ -78,3 +87,22 @@ jobs:
         run: echo '${{ steps.bump.outputs.version }}'
       - name: Output the changelog
         run: cat release.md
+      - name: Bundle the module
+        run: |
+          tar czf "${{ steps.module_name.outputs.name }}-${{ steps.bump.outputs.version }}.tar.gz" \
+            --exclude='.git' \
+            --exclude='.gitignore' \
+            --exclude='.github' \
+            --exclude='.cz.yaml' \
+            --exclude='*.tar.gz' \
+            --exclude='release.md' \
+            --exclude='CODEOWNERS' \
+            .
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: release.md
+          tag_name: ${{ steps.bump.outputs.version }}
+          files: |
+            release.md
+            ${{ steps.module_name.outputs.name }}-${{ steps.bump.outputs.version }}.tar.gz
