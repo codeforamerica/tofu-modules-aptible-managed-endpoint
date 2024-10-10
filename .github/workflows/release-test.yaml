@@ -89,7 +89,7 @@ jobs:
         run: cat release.md
       - name: Bundle the module
         run: |
-          tar czf "${{ steps.module_name.outputs.name }}-${{ steps.bump.outputs.version }}.tar.gz" \
+          tar \
             --exclude='.git' \
             --exclude='.gitignore' \
             --exclude='.github' \
@@ -97,6 +97,7 @@ jobs:
             --exclude='*.tar.gz' \
             --exclude='release.md' \
             --exclude='CODEOWNERS' \
+            czf "${{ steps.module_name.outputs.name }}-${{ steps.bump.outputs.version }}.tar.gz" \
             .
       - name: Create release
         uses: softprops/action-gh-release@v2
