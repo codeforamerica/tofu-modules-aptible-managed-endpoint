@@ -88,7 +88,10 @@ jobs:
       - name: Output the changelog
         run: cat release.md
       - name: Bundle the module
+        # We create an empty file first, so that tar doesn't complain about the
+        # contents changing while it's running.
         run: |
+          touch "${{ steps.module_name.outputs.name }}-${{ steps.bump.outputs.version }}.tar.gz"
           tar \
             --exclude='.git' \
             --exclude='.gitignore' \
