@@ -56,7 +56,7 @@ jobs:
           # Look for the last version number, expecting it to be in the format:
           # `#.#.#-<suffix>.#` where the suffix is optional.
           script: |
-            const message = 'bump: version 0.1.0 → 0.1.1 (#1)'
+            const message = '${{ github.event.head_commit.message }}'
             const regex = /^bump:.+(?<version>\d+\.\d+\.\d+[\da-z.-]*) \(#\d+\)$/
             const version = message.match(regex).groups.version
             console.log(version)
@@ -74,6 +74,8 @@ jobs:
             --exclude='*.tar.gz' \
             --exclude='release.md' \
             --exclude='CODEOWNERS' \
+            --exclude='trivy.yaml' \
+            --exclude='*.env' \
             -czf '${{ steps.module_name.outputs.name }}-${{ steps.version.outputs.result }}.tar.gz' \
             .
       - name: Get changelog entry
