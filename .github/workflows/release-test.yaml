@@ -76,3 +76,5 @@ jobs:
           git_redirect_stderr: true
       - name: Output the new version number
         run: echo '${{ steps.bump.outputs.version }}'
+      - name: Output the changelog
+        run: cat release.md
