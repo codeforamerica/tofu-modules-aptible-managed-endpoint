@@ -17,7 +17,7 @@ jobs:
         id: bump
         uses: commitizen-tools/commitizen-action@master
         with:
-          push: true
+          push: false
           github_token: ${{ secrets.GITHUB_TOKEN }}
           changelog_increment_filename: release.md
           git_redirect_stderr: true
