@@ -18,7 +18,7 @@ jobs:
         uses: commitizen-tools/commitizen-action@master
         with:
           push: false
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
           changelog_increment_filename: release.md
           git_redirect_stderr: true
       - name: Output the new version number
@@ -80,23 +80,23 @@ jobs:
             return version
       - name: Output the new version number
         run: echo '${{ steps.version.outputs.result }}'
-      - name: Bump version and create changelog
-        id: bump
-        uses: commitizen-tools/commitizen-action@master
-        with:
-          push: false
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          changelog_increment_filename: release.md
-          git_redirect_stderr: true
-      - name: Output the new version number
-        run: echo '${{ steps.bump.outputs.version }}'
-      - name: Output the changelog
-        run: cat release.md
+#      - name: Bump version and create changelog
+#        id: bump
+#        uses: commitizen-tools/commitizen-action@master
+#        with:
+#          push: false
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          changelog_increment_filename: release.md
+#          git_redirect_stderr: true
+#      - name: Output the new version number
+#        run: echo '${{ steps.bump.outputs.version }}'
+#      - name: Output the changelog
+#        run: cat release.md
       - name: Bundle the module
         # We create an empty file first, so that tar doesn't complain about the
         # contents changing while it's running.
         run: |
-          touch "${{ steps.module_name.outputs.name }}-${{ steps.bump.outputs.version }}.tar.gz"
+          touch '${{ steps.module_name.outputs.name }}-${{ steps.version.outputs.result }}.tar.gz'
           tar \
             --exclude='.git' \
             --exclude='.gitignore' \
@@ -105,18 +105,18 @@ jobs:
             --exclude='*.tar.gz' \
             --exclude='release.md' \
             --exclude='CODEOWNERS' \
-            -czf "${{ steps.module_name.outputs.name }}-${{ steps.bump.outputs.version }}.tar.gz" \
+            -czf "${{ steps.module_name.outputs.name }}-${{ steps.version.outputs.result }}.tar.gz" \
             .
       - name: Get changelog entry
         id: changelog
         uses: mindsers/changelog-reader-action@v2
         with:
           validation_level: warn
-          version: ${{ steps.bump.outputs.version }}
+          version: ${{ steps.version.outputs.result }}
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
           body: ${{ steps.changelog.outputs.changes }}
-          tag_name: ${{ steps.bump.outputs.version }}
+          tag_name: ${{ steps.version.outputs.result }}
           files: |
-            ${{ steps.module_name.outputs.name }}-${{ steps.bump.outputs.version }}.tar.gz
+            ${{ steps.module_name.outputs.name }}-${{ steps.version.outputs.result }}.tar.gz
