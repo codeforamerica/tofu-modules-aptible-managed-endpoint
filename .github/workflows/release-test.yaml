@@ -56,22 +56,23 @@ jobs:
         id: version
         uses: actions/github-script@v7
         with:
+          # Look for the last version number, expecting it to be in the format:
+          # `#.#.#-<suffix>.#` where the suffix is optional.
           script: |
             const message = 'bump: version 0.1.0 → 0.1.1 (#1)'
             const regex = /^bump:.+(?<version>\d+\.\d+\.\d+[\da-z.-]*) \(#\d+\)$/
             const version = message.match(regex).groups.version
             console.log(version)
             return version
-#      - name: Determine the new version number
-#        id: version
-#        shell: bash
-#        # Look for the last version number, expecting it to be in the format:
-#        # `#.#.#-<suffix>.#` where the suffix is optional.
-#        run: |
-#          MESSAGE='${{ github.event.head_commit.message }}'
-#          echo $MESSAGE
-#          [[ $MESSAGE =~ ^bump:.+([0-9]+\.[0-9+]\.[0-9]+[a-z0-9.\-]*)[[:space:]]\\(#[0-9]+\\) ]]
-#          echo $BASH_REMATCH
-#          echo "version=${BASH_REMATCH[2]}" >> $GITHUB_OUTPUT
       - name: Output the new version number
         run: echo '${{ steps.version.outputs.result }}'
+      - name: Bump version and create changelog
+        id: bump
+        uses: commitizen-tools/commitizen-action@master
+        with:
+          push: false
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          changelog_increment_filename: release.md
+          git_redirect_stderr: true
+      - name: Output the new version number
+        run: echo '${{ steps.bump.outputs.version }}'
