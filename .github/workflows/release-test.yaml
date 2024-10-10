@@ -102,13 +102,16 @@ jobs:
             --exclude='CODEOWNERS' \
             -czf "${{ steps.module_name.outputs.name }}-${{ steps.bump.outputs.version }}.tar.gz" \
             .
-      - name: get cz version
-        run: cz version
+      - name: Get changelog entry
+        id: changelog
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          validation_level: warn
+          version: ${{ steps.bump.outputs.version }}
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
-          body_path: release.md
+          body: ${{ steps.changelog.outputs.changes }}
           tag_name: ${{ steps.bump.outputs.version }}
           files: |
-            release.md
             ${{ steps.module_name.outputs.name }}-${{ steps.bump.outputs.version }}.tar.gz
