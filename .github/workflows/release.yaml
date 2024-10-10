@@ -9,7 +9,7 @@ jobs:
   # Builds a new release for the module by bumping the version number and
   # generating a changelog entry. Commit the changes and open a pull request.
   build-release:
-    name: Build a release for the module
+    name: Build new release
     runs-on: ubuntu-latest
     if: ${{ !startsWith(github.event.head_commit.message, 'bump:') }}
     steps:
@@ -35,7 +35,7 @@ jobs:
 
   # Creates a new tag and GitHub release for the module.
   release:
-    name: Build a release for the module
+    name: Release module
     runs-on: ubuntu-latest
     if: startsWith(github.event.head_commit.message, 'bump:')
     steps:
