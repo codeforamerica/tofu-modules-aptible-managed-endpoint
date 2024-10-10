@@ -1,9 +1,9 @@
-name: Release Test Checks
+name: Release New Version
 
 on:
   push:
     branches:
-      - release-test
+      - main
 
 jobs:
   # Builds a new release for the module by bumping the version number and
@@ -22,8 +22,6 @@ jobs:
           push: false
           github_token: ${{ secrets.GITHUB_TOKEN }}
           git_redirect_stderr: true
-      - name: Output the new version number
-        run: echo '${{ steps.bump.outputs.version }}'
       - name: Get the commit message
         id: message
         run: |
