@@ -2,7 +2,6 @@
 commitizen:
   changelog_incremental: true
   name: cz_conventional_commits
-  template_loader: keep_a_changelog
   update_changelog_on_bump: true
   version: 0.1.1
   version_scheme: semver2

@@ -6,6 +6,8 @@ on:
       - release-test
 
 jobs:
+  # Builds a new release for the module by bumping the version number and
+  # generating a changelog entry. Commit the changes and open a pull request.
   build-release:
     name: Build a release for the module
     runs-on: ubuntu-latest
@@ -18,20 +20,10 @@ jobs:
         uses: commitizen-tools/commitizen-action@master
         with:
           push: false
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
-          changelog_increment_filename: release.md
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           git_redirect_stderr: true
       - name: Output the new version number
         run: echo '${{ steps.bump.outputs.version }}'
-      - name: Get the module name
-        id: module_name
-        run: |
-          REPO_NAME="${{ github.event.repository.name }}"
-          REPO_NAME="${REPO_NAME/tofu-modules-/}"
-          MODULE_NAME="${REPO_NAME//-/_}"
-          echo "name=${MODULE_NAME}" >> $GITHUB_OUTPUT
-      - name: Output the module name
-        run: echo '${{ steps.module_name.outputs.name }}'
       - name: Get the commit message
         id: message
         run: |
@@ -43,16 +35,12 @@ jobs:
           branch: release-${{ steps.bump.outputs.version }}
           title: ${{ steps.message.outputs.message }}
 
+  # Creates a new tag and GitHub release for the module.
   release:
     name: Build a release for the module
     runs-on: ubuntu-latest
     if: startsWith(github.event.head_commit.message, 'bump:')
     steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: |
-          echo "$GITHUB_CONTEXT"
       - name: Checkout source code
         uses: actions/checkout@v4
       - name: Get the module name
@@ -62,14 +50,11 @@ jobs:
           REPO_NAME="${REPO_NAME/tofu-modules-/}"
           MODULE_NAME="${REPO_NAME//-/_}"
           echo "name=${MODULE_NAME}" >> $GITHUB_OUTPUT
-      - name: Output the module name
-        run: echo '${{ steps.module_name.outputs.name }}'
-      - name: Print commit message
-        run: echo '${{ github.event.head_commit.message }}'
-      - name: Determine the new version number
+      - name: Get the version from the commit message
         id: version
         uses: actions/github-script@v7
         with:
+          result-encoding: string
           # Look for the last version number, expecting it to be in the format:
           # `#.#.#-<suffix>.#` where the suffix is optional.
           script: |
@@ -78,20 +63,6 @@ jobs:
             const version = message.match(regex).groups.version
             console.log(version)
             return version
-      - name: Output the new version number
-        run: echo '${{ steps.version.outputs.result }}'
-#      - name: Bump version and create changelog
-#        id: bump
-#        uses: commitizen-tools/commitizen-action@master
-#        with:
-#          push: false
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
-#          changelog_increment_filename: release.md
-#          git_redirect_stderr: true
-#      - name: Output the new version number
-#        run: echo '${{ steps.bump.outputs.version }}'
-#      - name: Output the changelog
-#        run: cat release.md
       - name: Bundle the module
         # We create an empty file first, so that tar doesn't complain about the
         # contents changing while it's running.
@@ -105,18 +76,20 @@ jobs:
             --exclude='*.tar.gz' \
             --exclude='release.md' \
             --exclude='CODEOWNERS' \
-            -czf "${{ steps.module_name.outputs.name }}-${{ steps.version.outputs.result }}.tar.gz" \
+            -czf '${{ steps.module_name.outputs.name }}-${{ steps.version.outputs.result }}.tar.gz' \
             .
       - name: Get changelog entry
         id: changelog
-        uses: mindsers/changelog-reader-action@v2
+        uses: artlaman/conventional-changelog-reader-action@v1.1.0
         with:
-          validation_level: warn
           version: ${{ steps.version.outputs.result }}
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
-          body: ${{ steps.changelog.outputs.changes }}
+          body: |
+            ## ${{ steps.changelog.outputs.version }} (${{ steps.changelog.outputs.date }})
+
+            ${{ steps.changelog.outputs.changes }}
           tag_name: ${{ steps.version.outputs.result }}
           files: |
             ${{ steps.module_name.outputs.name }}-${{ steps.version.outputs.result }}.tar.gz
