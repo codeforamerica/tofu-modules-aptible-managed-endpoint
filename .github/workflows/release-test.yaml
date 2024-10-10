@@ -32,3 +32,23 @@ jobs:
           echo "name=${MODULE_NAME}" >> $GITHUB_OUTPUT
       - name: Output the module name
         run: echo '${{ steps.module_name.outputs.name }}'
+      - name: Get the commit message
+        id: message
+        run: |
+          MESSAGE=$(git log --format=%B -n 1)
+          echo "message=${MESSAGE}" >> $GITHUB_OUTPUT
+      - name: Open a pull request for the release
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: release-${{ steps.bump.outputs.version }}
+          title: ${{ steps.message.outputs.message }}
+
+  release:
+    name: Build a release for the module
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message, 'bump:')
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Print commit message
+        run: echo ${{ github.event.head_commit.message }}
