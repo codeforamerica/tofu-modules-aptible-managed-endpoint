@@ -13,7 +13,7 @@ to match your desired configuration. For example:
 
 ```hcl
 module "endpoint" {
-  source = "github.com/codeforamerica/tofu-modules-aptible-managed-endpoint?ref=1.0.0"
+  source = "github.com/codeforamerica/tofu-modules-aptible-managed-endpoint?ref=1.1.0"
 
   aptible_environment = "my-environment"
   aptible_resource    = 12345
