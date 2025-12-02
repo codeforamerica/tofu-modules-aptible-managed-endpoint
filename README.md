@@ -13,7 +13,7 @@ to match your desired configuration. For example:
 
 ```hcl
 module "endpoint" {
-  source = "github.com/codeforamerica/tofu-modules-aptible-managed-endpoint?ref=1.1.0"
+  source = "github.com/codeforamerica/tofu-modules-aptible-managed-endpoint?ref=1.2.0"
 
   aptible_environment = "my-environment"
   aptible_resource    = 12345
@@ -38,14 +38,15 @@ tofu init -upgrade
 
 ## Inputs
 
-| Name                | Description                                                                         | Type           | Default | Required |
-|---------------------|-------------------------------------------------------------------------------------|----------------|---------|----------|
-| aptible_environment | Name of the Aptible environment for the endpoint.                                   | `string`       | n/a     | yes      |
-| aptible_resource    | ID of the resource to attach the endpoint to.                                       | `number`       | n/a     | yes      |
-| domain              | Top-level domain name for the endpoint. This will be used to find the Route53 zone. | `string`       | n/a     | yes      |
-| subdomain           | Subdomain for the endpoint. This will be prepended to the domain.                   | `string`       | n/a     | yes      |
-| allowed_cidrs       | An optional lit of CIDRs to allow traffic from (limited to 50 entries).             | `list(string)` | `[]`    | no       |
-| public              | Whether the endpoint should be available to the public Internet.                    | `bool`         | `false` | no       |
+| Name                | Description                                                                                                   | Type           | Default | Required |
+|---------------------|---------------------------------------------------------------------------------------------------------------|----------------|---------|----------|
+| aptible_environment | Name of the Aptible environment for the endpoint.                                                             | `string`       | n/a     | yes      |
+| aptible_resource    | ID of the resource to attach the endpoint to.                                                                 | `number`       | n/a     | yes      |
+| domain              | Top-level domain name for the endpoint. This will be used to find the Route53 zone.                           | `string`       | n/a     | yes      |
+| subdomain           | Subdomain for the endpoint. This will be prepended to the domain.                                             | `string`       | n/a     | yes      |
+| allowed_cidrs       | An optional lit of CIDRs to allow traffic from (limited to 50 entries).                                       | `list(string)` | `[]`    | no       |
+| container_port      | Port on the container to direct traffic to. If not set, defaults to the port defined in the Aptible resource. | `number`       | `null`  | no       |
+| public              | Whether the endpoint should be available to the public Internet.                                              | `bool`         | `false` | no       |
 
 ## Outputs
 
