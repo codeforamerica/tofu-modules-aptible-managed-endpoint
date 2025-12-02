@@ -51,8 +51,8 @@ tofu init -upgrade
 
 | Name     | Description                                         | Type     |
 |----------|-----------------------------------------------------|----------|
-| id       | Id of the Aptible endpoint.                         | `string` |
-| fqdn     | Fully qualified domain name for the HTTPS endpoint. | `number` |
+| id       | ID of the Aptible endpoint.                         | `string` |
+| fqdn     | Fully qualified domain name for the HTTPS endpoint. | `string` |
 | hostname | Hostname of the endpoint that was created.          | `string` |
 
 [badge-checks]: https://github.com/codeforamerica/tofu-modules-aptible-managed-endpoint/actions/workflows/main.yaml/badge.svg
