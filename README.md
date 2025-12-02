@@ -51,7 +51,7 @@ tofu init -upgrade
 
 | Name     | Description                                         | Type     |
 |----------|-----------------------------------------------------|----------|
-| id       | ID of the Aptible endpoint.                         | `string` |
+| id       | ID of the Aptible endpoint.                         | `number` |
 | fqdn     | Fully qualified domain name for the HTTPS endpoint. | `string` |
 | hostname | Hostname of the endpoint that was created.          | `string` |
 
