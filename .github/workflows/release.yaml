@@ -91,7 +91,7 @@ jobs:
             .
       - name: Get changelog entry
         id: changelog
-        uses: artlaman/conventional-changelog-reader-action@v1
+        uses: artlaman/conventional-changelog-reader-action@v1.1.0
         with:
           version: ${{ steps.version.outputs.result }}
       - name: Create release
