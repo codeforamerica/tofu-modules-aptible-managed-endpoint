@@ -5,6 +5,7 @@ resource "aptible_endpoint" "endpoint" {
   domain       = local.fqdn
   managed      = true
   ip_filtering = var.allowed_cidrs
+  container_port = var.container_port
 
   # TODO: Should these be configurable? Probably.
   resource_type = "app"

@@ -14,6 +14,12 @@ variable "aptible_resource" {
   description = "ID of the resource to attach the endpoint to."
 }
 
+variable "container_port" {
+  type        = number
+  description = "Port on the container to direct traffic to. If not set, defaults to the port defined in the Aptible resource."
+  default     = null
+}
+
 variable "domain" {
   type        = string
   description = "Top-level domain name for the endpoint. This will be used to find the Route53 zone."
