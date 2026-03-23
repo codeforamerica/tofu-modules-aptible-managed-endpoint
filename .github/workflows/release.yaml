@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 0
       - name: Bump version and create changelog
         id: bump
-        uses: commitizen-tools/commitizen-action@0.26.0
+        uses: commitizen-tools/commitizen-action@0.27.0
         with:
           push: false
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -34,7 +34,7 @@ jobs:
           MESSAGE=$(git log --format=%B -n 1)
           echo "message=${MESSAGE}" >> $GITHUB_OUTPUT
       - name: Open a pull request for the release
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           branch: release-${{ steps.bump.outputs.version }}
           title: ${{ steps.message.outputs.message }}
